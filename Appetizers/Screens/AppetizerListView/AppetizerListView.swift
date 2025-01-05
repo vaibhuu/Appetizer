@@ -16,13 +16,23 @@ struct AppetizerListView: View {
             NavigationStack {
                 List(appetizerListViewModel.appetizers) { appetizer in
                     AppetizerListCell(appetizer: appetizer)
+                        .onTapGesture {
+                            appetizerListViewModel.selectedAppetizer = appetizer
+                            appetizerListViewModel.isShowingDetail = true
+                        }
                 }
                 .navigationTitle("Appertilers")
             }
+            .disabled(appetizerListViewModel.isShowingDetail)
+            .blur(radius: appetizerListViewModel.isShowingDetail ? 20 : 0)
+            
             .onAppear() {
                 appetizerListViewModel.getAppetizers()
             }
             
+            if appetizerListViewModel.isShowingDetail {
+                AppetizerDetailView(appetizer: appetizerListViewModel.selectedAppetizer, isShowingDetail: $appetizerListViewModel.isShowingDetail)
+            }
             if appetizerListViewModel.isLoading {
                 ProgressView()
                     .tint(.brandPrimaryColor)
